@@ -1,4 +1,19 @@
-﻿---THU TUC TU TANG MA
+﻿ALTER PROC Gen_ID
+@TenBang NVARCHAR(100), @Pre NVARCHAR(10), @TenCotID NVARCHAR(20),  @Return NVARCHAR(10) OUTPUT
+AS 
+BEGIN
+	DECLARE @paramDef NVARCHAR(MAX) = '@result nvarchar(100) output'
+	DECLARE @sql NVARCHAR(MAX) = '
+		DECLARE @lastID int
+		set @lastID  = (select top(1) 
+			CONVERT(int, SUBSTRING('+@TenCotID+', 3, len('+@TenCotID+'))) IDEN from '+@TenBang+' order by IDEN desc)
+		SELECT @result = N'''+ @Pre + ''' + FORMAT(@lastID + 1, ''D3'')
+	'
+	EXECUTE sys.sp_executesql @sql, @paramDef, @result = @Return OUTPUT
+END
+
+
+---THU TUC TU TANG MA
 	create proc Test_Insert
 	@Name nvarchar(50)
 	as
